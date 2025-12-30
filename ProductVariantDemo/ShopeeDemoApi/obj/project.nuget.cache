@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "KDunnkuUXYs=",
+  "dgSpecHash": "xS13m1D+u+w=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Admin\\Desktop\\github\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj",
+  "projectFilePath": "C:\\Users\\Admin\\Desktop\\github\\NET1062_CSharp6_Labs\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\azure.core\\1.47.1\\azure.core.1.47.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\azure.identity\\1.14.2\\azure.identity.1.14.2.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\Desktop\\github\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj": {}
+    "C:\\Users\\Admin\\Desktop\\github\\NET1062_CSharp6_Labs\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\Desktop\\github\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj": {
+    "C:\\Users\\Admin\\Desktop\\github\\NET1062_CSharp6_Labs\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\Desktop\\github\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj",
+        "projectUniqueName": "C:\\Users\\Admin\\Desktop\\github\\NET1062_CSharp6_Labs\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj",
         "projectName": "ShopeeDemoApi",
-        "projectPath": "C:\\Users\\Admin\\Desktop\\github\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj",
+        "projectPath": "C:\\Users\\Admin\\Desktop\\github\\NET1062_CSharp6_Labs\\ProductVariantDemo\\ShopeeDemoApi\\ShopeeDemoApi.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\Desktop\\github\\ProductVariantDemo\\ShopeeDemoApi\\obj\\",
+        "outputPath": "C:\\Users\\Admin\\Desktop\\github\\NET1062_CSharp6_Labs\\ProductVariantDemo\\ShopeeDemoApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

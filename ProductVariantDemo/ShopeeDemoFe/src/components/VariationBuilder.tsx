@@ -19,7 +19,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Plus, Trash2, Image as ImageIcon } from "lucide-react";
+import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 
 import { Button } from "./ui/button";
@@ -27,6 +27,7 @@ import { Input } from "./ui/input";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Label } from "./ui/label";
 import type { ProductForm } from "../schema";
+import { ImageUpload } from "./ImageUpload";
 
 interface VariationBuilderProps {
   form: UseFormReturn<ProductForm>;
@@ -178,21 +179,22 @@ function SortableGroup({ field, index, form, removeGroup }: SortableGroupProps) 
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative group">
-      <Card>
-        <CardHeader className="flex flex-row items-center space-y-0 gap-4 py-4">
+    <div ref={setNodeRef} style={style} className="relative group transition-all duration-200">
+      <Card className="border shadow-sm hover:shadow-md transition-shadow duration-200 bg-white">
+        <CardHeader className="flex flex-row items-center space-y-0 gap-4 py-4 bg-gray-50/30 border-b">
           <div
             {...attributes}
             {...listeners}
-            className="cursor-grab hover:text-primary"
+            className="cursor-grab hover:text-orange-500 transition-colors p-2 rounded hover:bg-orange-50"
           >
             <GripVertical className="h-5 w-5" />
           </div>
-          <div className="grid w-full items-center gap-1.5">
-            <Label>Tên nhóm phân loại {index + 1}</Label>
+          <div className="grid w-full items-center gap-1.5 flex-1">
+            <Label className="text-gray-600 font-semibold">Tên nhóm phân loại {index + 1}</Label>
             <Input
               {...register(`variations.${index}.name` as const)}
               placeholder="Ví dụ: Màu sắc, Kích thước"
+              className="border-gray-300 focus:border-orange-500 focus:ring-orange-500"
             />
           </div>
           <Button
@@ -200,7 +202,7 @@ function SortableGroup({ field, index, form, removeGroup }: SortableGroupProps) 
             variant="ghost"
             size="icon"
             onClick={removeGroup}
-            className="text-destructive hover:text-destructive/90"
+            className="text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
           >
             <Trash2 className="h-5 w-5" />
           </Button>
@@ -276,15 +278,11 @@ function SortableOption({ id, index, groupIndex, form, remove }: SortableOptionP
             />
             
             {isFirstGroup && (
-                <div className="flex items-center gap-2 mt-2">
-                     <div className="w-full h-20 border-dashed border rounded flex items-center justify-center text-muted-foreground text-xs cursor-pointer hover:bg-accent/50 transition">
-                        <div className="text-center">
-                            <ImageIcon className="h-4 w-4 mx-auto mb-1" />
-                            <span>Ảnh</span>
-                        </div>
-                        {/* Fake file input */}
-                        <Input type="hidden" {...register(`variations.${groupIndex}.options.${index}.image` as const)} />
-                     </div>
+                <div className="mt-2">
+                     <ImageUpload 
+                        value={form.watch(`variations.${groupIndex}.options.${index}.image` as const)}
+                        onChange={(val: string) => form.setValue(`variations.${groupIndex}.options.${index}.image` as const, val)}
+                     />
                 </div>
             )}
         </div>
