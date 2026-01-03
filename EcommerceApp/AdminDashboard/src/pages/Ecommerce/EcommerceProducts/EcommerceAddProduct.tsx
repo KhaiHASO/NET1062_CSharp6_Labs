@@ -28,9 +28,12 @@ import classnames from "classnames";
 import Dropzone from "react-dropzone";
 import { Link, useNavigate } from "react-router-dom";
 
-//formik
-import { useFormik } from "formik";
-import * as Yup from "yup";
+// React Hook Form
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProductFormSchema, type ProductForm } from "../../../helpers/schema";
+import { VariationBuilder } from "../../../Components/ProductVariant/VariationBuilder";
+import { SKUTable } from "../../../Components/ProductVariant/SKUTable";
 
 // Import React FilePond
 import { registerPlugin } from "react-filepond";
@@ -58,7 +61,32 @@ const EcommerceAddProduct = () => {
     }
   };
   const [selectedFiles, setselectedFiles] = useState<any>([]);
-  const [selectedVisibility, setselectedVisibility] = useState<any>(null);
+  
+  // RHF Setup
+  const form = useForm<ProductForm>({
+      resolver: zodResolver(ProductFormSchema),
+      defaultValues: {
+          name: "",
+          price: 0,
+          stock: 0,
+          orders: 0,
+          category: "",
+          publishedDate: new Date().toISOString(),
+          status: "published",
+          rating: 4.5,
+          manufacturer_name: "",
+          manufacturer_brand: "",
+          product_discount: 0,
+          product_tags: "",
+          image: "",
+          variations: [],
+          items: [],
+          description: "",
+      },
+      mode: "onChange"
+  });
+
+  const { register, control, handleSubmit, formState: { errors }, setValue } = form;
 
   function handleAcceptedFiles(files: any) {
     files.map((file: any) =>
@@ -68,10 +96,6 @@ const EcommerceAddProduct = () => {
       })
     );
     setselectedFiles(files);
-  }
-
-  function handleSelectVisibility(selectedVisibility: any) {
-    setselectedVisibility(selectedVisibility);
   }
 
   /**
@@ -102,55 +126,6 @@ const EcommerceAddProduct = () => {
     },
   ];
 
-  const dateFormat = () => {
-    let d = new Date(),
-      months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-    let h = d.getHours() % 12 || 12;
-    let ampm = d.getHours() < 12 ? "AM" : "PM";
-    return (
-      d.getDate() +
-      " " +
-      months[d.getMonth()] +
-      ", " +
-      d.getFullYear() +
-      ", " +
-      h +
-      ":" +
-      d.getMinutes() +
-      " " +
-      ampm
-    ).toString();
-  };
-
-  const [date, setDate] = useState<any>(dateFormat());
-
-  const dateformate = (e: any) => {
-    const dateString = e.toString().split(" ");
-    let time = dateString[4];
-    let H = +time.substr(0, 2);
-    let h: any = H % 12 || 12;
-    h = h <= 9 ? (h = "0" + h) : h;
-    let ampm = H < 12 ? "AM" : "PM";
-    time = h + time.substr(2, 3) + " " + ampm;
-
-    const date = dateString[2] + " " + dateString[1] + ", " + dateString[3];
-    const orderDate = (date + ", " + time).toString();
-    setDate(orderDate);
-  };
-
   const productStatus = [
     {
       options: [
@@ -177,50 +152,13 @@ const EcommerceAddProduct = () => {
     const file = event.target.files[0];
     const reader = new FileReader();
     reader.onload = (e: any) => {
-      validation.setFieldValue("image", e.target.result);
+      setValue("image", e.target.result);
       setSelectedImage(e.target.result);
     };
     reader.readAsDataURL(file);
   };
 
-  const validation: any = useFormik({
-    enableReinitialize: true,
-
-    initialValues: {
-      name: "",
-      price: "",
-      stock: "",
-      orders: "",
-      category: "",
-      publishedDate: "",
-      status: "",
-      rating: 4.5,
-      manufacturer_name: "",
-      manufacturer_brand: "",
-      product_discount: "",
-      product_tags: "",
-      image: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Please Enter a Product Title"),
-      price: Yup.string().required("Please Enter a Product Price"),
-      stock: Yup.string().required("Please Enter a Product stock"),
-      orders: Yup.string().required("Please Enter a Product orders"),
-      category: Yup.string().required("Please Enter a Product category"),
-      // status: Yup.string().required("Please Enter a Product status"),
-      manufacturer_name: Yup.string().required(
-        "Please Enter a Manufacturer Name"
-      ),
-      manufacturer_brand: Yup.string().required(
-        "Please Enter a Manufacturer Brand"
-      ),
-      product_discount: Yup.string().required(
-        "Please Enter a Product Discount"
-      ),
-      product_tags: Yup.string().required("Please Enter a Product Tags"),
-      image: Yup.string().required("Please add an image"),
-    }),
-    onSubmit: (values) => {
+  const onSubmit = (values: ProductForm) => {
       const newProduct = {
         id: (Math.floor(Math.random() * (30 - 20)) + 20).toString(),
         name: values.name,
@@ -228,31 +166,32 @@ const EcommerceAddProduct = () => {
         stock: values.stock,
         orders: values.orders,
         category: values.category,
-        publishedDate: date,
+        publishedDate: values.publishedDate,
         status: values.status,
         rating: 4.5,
         image: selectedImage,
+        variations: values.variations,
+        items: values.items
       };
       // save new product
       dispatch(onAddNewProduct(newProduct));
       history("/apps-ecommerce-products");
-      validation.resetForm();
-    },
-  });
+  };
+
   return (
     <div className="page-content">
       <Container fluid>
         <BreadCrumb title="Create Product" pageTitle="Ecommerce" />
 
+        <Form
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(onSubmit)();
+                return false;
+            }}
+        >
         <Row>
           <Col lg={8}>
-            <Form
-              onSubmit={(e) => {
-                e.preventDefault();
-                validation.handleSubmit();
-                return false;
-              }}
-            >
               <Card>
                 <CardBody>
                   <div className="mb-3">
@@ -264,44 +203,31 @@ const EcommerceAddProduct = () => {
                       className="form-control"
                       id="product-title-input"
                       placeholder="Enter product title"
-                      name="name"
-                      value={validation.values.name || ""}
-                      onBlur={validation.handleBlur}
-                      onChange={validation.handleChange}
-                      invalid={
-                        validation.errors.name && validation.touched.name
-                          ? true
-                          : false
-                      }
+                      {...register("name")}
+                      invalid={!!errors.name}
                     />
-                    {validation.errors.name && validation.touched.name ? (
+                    {errors.name && (
                       <FormFeedback type="invalid">
-                        {validation.errors.name}
+                        {errors.name?.message as string}
                       </FormFeedback>
-                    ) : null}
+                    )}
                   </div>
                   <div>
                     <Label>Product Description</Label>
 
-                    <CKEditor
-                      editor={ClassicEditor as any}
-                      data="<p>
-                      Tommy Hilfiger men striped pink sweatshirt. Crafted with
-                      cotton. Material composition is 100% organic cotton.
-                      This is one of the world’s leading designer lifestyle
-                      brands and is internationally recognized for celebrating
-                      the essence of classic American cool style, featuring
-                      preppy with a twist designs.
-                    </p>
-                    <ul>
-                      <li>Full Sleeve</li>
-                      <li>Cotton</li>
-                      <li>All Sizes available</li>
-                      <li>4 Different Color</li>
-                    </ul>"
-                      onReady={(editor) => {
-                        // You can store the "editor" and use when it is needed.
-                      }}
+                    <Controller
+                        name="description"
+                        control={control}
+                        render={({ field }: { field: any }) => (
+                            <CKEditor
+                                editor={ClassicEditor as any}
+                                data={field.value || ""}
+                                onChange={(event: any, editor: any) => {
+                                    const data = editor.getData();
+                                    field.onChange(data);
+                                }}
+                            />
+                        )}
                     />
                   </div>
                 </CardBody>
@@ -337,12 +263,7 @@ const EcommerceAddProduct = () => {
                             type="file"
                             accept="image/png, image/gif, image/jpeg"
                             onChange={handleImageChange}
-                            invalid={
-                              validation.touched.image &&
-                              validation.errors.image
-                                ? true
-                                : false
-                            }
+                            invalid={!!errors.image}
                           />
                         </div>
                         <div className="avatar-lg">
@@ -356,12 +277,12 @@ const EcommerceAddProduct = () => {
                           </div>
                         </div>
                       </div>
-                      {validation.errors.image && validation.touched.image ? (
-                        <FormFeedback type="invalid">
+                      {errors.image && (
+                        <FormFeedback type="invalid" className="d-block">
                           {" "}
-                          {validation.errors.image}{" "}
+                          {errors.image?.message as string}{" "}
                         </FormFeedback>
-                      ) : null}
+                      )}
                     </div>
                   </div>
                   <div>
@@ -369,7 +290,7 @@ const EcommerceAddProduct = () => {
                     <p className="text-muted">Add Product Gallery Images.</p>
 
                     <Dropzone
-                      onDrop={(acceptedFiles) => {
+                      onDrop={(acceptedFiles: any) => {
                         handleAcceptedFiles(acceptedFiles);
                       }}
                     >
@@ -426,6 +347,14 @@ const EcommerceAddProduct = () => {
                 </CardBody>
               </Card>
 
+              {/* Variation Builder Section */}
+              <VariationBuilder form={form} />
+              
+              <div className="mt-4">
+                  <SKUTable form={form} />
+              </div>
+
+
               <Card>
                 <CardHeader>
                   <Nav className="nav-tabs-custom card-header-tabs border-bottom-0">
@@ -461,24 +390,15 @@ const EcommerceAddProduct = () => {
                               type="text"
                               className="form-control"
                               id="manufacturer-name-input"
-                              name="manufacturer_name"
                               placeholder="Enter manufacturer name"
-                              value={validation.values.manufacturer_name || ""}
-                              onBlur={validation.handleBlur}
-                              onChange={validation.handleChange}
-                              invalid={
-                                validation.errors.manufacturer_name &&
-                                validation.touched.manufacturer_name
-                                  ? true
-                                  : false
-                              }
+                              {...register("manufacturer_name")}
+                              invalid={!!errors.manufacturer_name}
                             />
-                            {validation.errors.manufacturer_name &&
-                            validation.touched.manufacturer_name ? (
+                             {errors.manufacturer_name && (
                               <FormFeedback type="invalid">
-                                {validation.errors.manufacturer_name}
+                                {errors.manufacturer_name?.message as string}
                               </FormFeedback>
-                            ) : null}
+                            )}
                           </div>
                         </Col>
                         <Col lg={6}>
@@ -493,24 +413,15 @@ const EcommerceAddProduct = () => {
                               type="text"
                               className="form-control"
                               id="manufacturer-brand-input"
-                              name="manufacturer_brand"
                               placeholder="Enter manufacturer brand"
-                              value={validation.values.manufacturer_brand || ""}
-                              onBlur={validation.handleBlur}
-                              onChange={validation.handleChange}
-                              invalid={
-                                validation.errors.manufacturer_brand &&
-                                validation.touched.manufacturer_brand
-                                  ? true
-                                  : false
-                              }
+                              {...register("manufacturer_brand")}
+                              invalid={!!errors.manufacturer_brand}
                             />
-                            {validation.errors.manufacturer_brand &&
-                            validation.touched.manufacturer_brand ? (
+                            {errors.manufacturer_brand && (
                               <FormFeedback type="invalid">
-                                {validation.errors.manufacturer_brand}
+                                {errors.manufacturer_brand?.message as string}
                               </FormFeedback>
-                            ) : null}
+                            )}
                           </div>
                         </Col>
                       </Row>
@@ -525,27 +436,18 @@ const EcommerceAddProduct = () => {
                             </label>
                             <div className="input-group mb-3">
                               <Input
-                                type="text"
+                                type="number"
                                 className="form-control"
                                 id="product-stock-input"
                                 placeholder="Enter Stocks"
-                                name="stock"
-                                value={validation.values.stock || ""}
-                                onBlur={validation.handleBlur}
-                                onChange={validation.handleChange}
-                                invalid={
-                                  validation.errors.stock &&
-                                  validation.touched.stock
-                                    ? true
-                                    : false
-                                }
+                                {...register("stock", { valueAsNumber: true })}
+                                invalid={!!errors.stock}
                               />
-                              {validation.errors.stock &&
-                              validation.touched.stock ? (
+                               {errors.stock && (
                                 <FormFeedback type="invalid">
-                                  {validation.errors.stock}
+                                  {errors.stock?.message as string}
                                 </FormFeedback>
-                              ) : null}
+                              )}
                             </div>
                           </div>
                         </Col>
@@ -566,29 +468,18 @@ const EcommerceAddProduct = () => {
                                 $
                               </span>
                               <Input
-                                type="text"
+                                type="number"
                                 className="form-control"
                                 id="product-price-input"
                                 placeholder="Enter price"
-                                name="price"
-                                aria-label="Price"
-                                aria-describedby="product-price-addon"
-                                value={validation.values.price || ""}
-                                onBlur={validation.handleBlur}
-                                onChange={validation.handleChange}
-                                invalid={
-                                  validation.errors.price &&
-                                  validation.touched.price
-                                    ? true
-                                    : false
-                                }
+                                {...register("price", { valueAsNumber: true })}
+                                invalid={!!errors.price}
                               />
-                              {validation.errors.price &&
-                              validation.touched.price ? (
+                               {errors.price && (
                                 <FormFeedback type="invalid">
-                                  {validation.errors.price}
+                                  {errors.price?.message as string}
                                 </FormFeedback>
-                              ) : null}
+                              )}
                             </div>
                           </div>
                         </Col>
@@ -609,29 +500,18 @@ const EcommerceAddProduct = () => {
                                 %
                               </span>
                               <Input
-                                type="text"
+                                type="number"
                                 className="form-control"
                                 id="product-Discount-input"
                                 placeholder="Enter Discount"
-                                name="product_discount"
-                                aria-label="product_discount"
-                                aria-describedby="product-orders-addon"
-                                value={validation.values.product_discount || ""}
-                                onBlur={validation.handleBlur}
-                                onChange={validation.handleChange}
-                                invalid={
-                                  validation.errors.product_discount &&
-                                  validation.touched.product_discount
-                                    ? true
-                                    : false
-                                }
+                                {...register("product_discount", { valueAsNumber: true })}
+                                invalid={!!errors.product_discount}
                               />
-                              {validation.errors.product_discount &&
-                              validation.touched.product_discount ? (
+                               {errors.product_discount && (
                                 <FormFeedback type="invalid">
-                                  {validation.errors.product_discount}
+                                  {errors.product_discount?.message as string}
                                 </FormFeedback>
-                              ) : null}
+                              )}
                             </div>
                           </div>
                         </Col>
@@ -646,29 +526,18 @@ const EcommerceAddProduct = () => {
                             </label>
                             <div className="input-group mb-3">
                               <Input
-                                type="text"
+                                type="number"
                                 className="form-control"
                                 id="product-orders-input"
                                 placeholder="Enter orders"
-                                name="orders"
-                                aria-label="orders"
-                                aria-describedby="product-orders-addon"
-                                value={validation.values.orders || ""}
-                                onBlur={validation.handleBlur}
-                                onChange={validation.handleChange}
-                                invalid={
-                                  validation.errors.orders &&
-                                  validation.touched.orders
-                                    ? true
-                                    : false
-                                }
+                                {...register("orders", { valueAsNumber: true })}
+                                invalid={!!errors.orders}
                               />
-                              {validation.errors.orders &&
-                              validation.touched.orders ? (
+                               {errors.orders && (
                                 <FormFeedback type="invalid">
-                                  {validation.errors.orders}
+                                  {errors.orders?.message as string}
                                 </FormFeedback>
-                              ) : null}
+                              )}
                             </div>
                           </div>
                         </Col>
@@ -683,7 +552,6 @@ const EcommerceAddProduct = () => {
                   Submit
                 </button>
               </div>
-            </Form>
           </Col>
 
           <Col lg={4}>
@@ -700,13 +568,11 @@ const EcommerceAddProduct = () => {
                     Status
                   </Label>
                   <Input
-                    name="status"
                     type="select"
                     className="form-select"
                     id="choices-publish-status-input"
-                    onChange={validation.handleChange}
-                    onBlur={validation.handleBlur}
-                    value={validation.values.status || ""}
+                    {...register("status")}
+                    invalid={!!errors.status}
                   >
                     {productStatus.map((item, key) => (
                       <React.Fragment key={key}>
@@ -718,11 +584,11 @@ const EcommerceAddProduct = () => {
                       </React.Fragment>
                     ))}
                   </Input>
-                  {validation.touched.status && validation.errors.status ? (
+                    {errors.status && (
                     <FormFeedback type="invalid">
-                      {validation.errors.status}
+                      {errors.status?.message as string}
                     </FormFeedback>
-                  ) : null}
+                  )}
                 </div>
 
                 <div>
@@ -733,14 +599,16 @@ const EcommerceAddProduct = () => {
                     Visibility
                   </Label>
 
-                  <Select
-                    value={selectedVisibility}
-                    onChange={(selectedVisibility: any) => {
-                      handleSelectVisibility(selectedVisibility);
-                    }}
-                    options={productVisibility}
-                    name="choices-publish-visibility-input"
-                    classNamePrefix="select2-selection form-select"
+                  <Controller 
+                    name="visibility"
+                    control={control}
+                    render={({ field }: { field: any }) => (
+                         <Select
+                            {...field}
+                            options={productVisibility[0].options}
+                            classNamePrefix="select2-selection form-select"
+                         />
+                    )}
                   />
                 </div>
               </CardBody>
@@ -759,26 +627,25 @@ const EcommerceAddProduct = () => {
                   >
                     Publish Date & Time
                   </label>
-                  <Flatpickr
+                  <Controller
+                    control={control}
                     name="publishedDate"
-                    id="publishedDate-field"
-                    className="form-control"
-                    placeholder="Select a date"
-                    options={{
-                      enableTime: true,
-                      altInput: true,
-                      altFormat: "d M, Y, G:i K",
-                      dateFormat: "d M, Y, G:i K",
-                    }}
-                    onChange={(e) => dateformate(e)}
-                    value={validation.values.publishedDate || ""}
-                  />
-                  {validation.touched.publishedDate &&
-                  validation.errors.publishedDate ? (
-                    <FormFeedback type="invalid">
-                      {validation.errors.publishedDate}
-                    </FormFeedback>
-                  ) : null}
+                    render={({ field: { onChange, value } }: { field: { onChange: any; value: any } }) => (
+                        <Flatpickr
+                        className="form-control"
+                        value={value}
+                        onChange={([date]: any) => {
+                            onChange(date.toISOString());
+                        }}
+                        options={{
+                            enableTime: true,
+                            altInput: true,
+                            altFormat: "d M, Y, G:i K",
+                            dateFormat: "d M, Y, G:i K",
+                        }}
+                        />
+                    )}
+                   />
                 </div>
               </CardBody>
             </Card>
@@ -797,13 +664,11 @@ const EcommerceAddProduct = () => {
                 </p>
 
                 <Input
-                  name="category"
                   type="select"
                   className="form-select"
                   id="category-field"
-                  onChange={validation.handleChange}
-                  onBlur={validation.handleBlur}
-                  value={validation.values.category || ""}
+                  {...register("category")}
+                  invalid={!!errors.category}
                 >
                   {productCategory.map((item, key) => (
                     <React.Fragment key={key}>
@@ -815,11 +680,11 @@ const EcommerceAddProduct = () => {
                     </React.Fragment>
                   ))}
                 </Input>
-                {validation.touched.category && validation.errors.category ? (
+                 {errors.category && (
                   <FormFeedback type="invalid">
-                    {validation.errors.category}
+                    {errors.category?.message as string}
                   </FormFeedback>
-                ) : null}
+                )}
               </CardBody>
             </Card>
 
@@ -834,23 +699,14 @@ const EcommerceAddProduct = () => {
                       className="form-control"
                       placeholder="Enter tags"
                       type="text"
-                      name="product_tags"
-                      value={validation.values.product_tags || ""}
-                      onBlur={validation.handleBlur}
-                      onChange={validation.handleChange}
-                      invalid={
-                        validation.errors.product_tags &&
-                        validation.touched.product_tags
-                          ? true
-                          : false
-                      }
+                      {...register("product_tags")}
+                      invalid={!!errors.product_tags}
                     />
-                    {validation.errors.product_tags &&
-                    validation.touched.product_tags ? (
+                     {errors.product_tags && (
                       <FormFeedback type="invalid">
-                        {validation.errors.product_tags}
+                        {errors.product_tags?.message as string}
                       </FormFeedback>
-                    ) : null}
+                    )}
                   </div>
                 </div>
               </CardBody>
@@ -873,6 +729,7 @@ const EcommerceAddProduct = () => {
             </Card>
           </Col>
         </Row>
+        </Form>
       </Container>
     </div>
   );
