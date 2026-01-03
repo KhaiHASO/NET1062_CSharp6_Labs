@@ -21,6 +21,13 @@ namespace EcommerceAPI.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
+        // Foreign Keys (Nullable for safe migration)
+        public int? BrandId { get; set; }
+        public Brand? Brand { get; set; }
+
+        public int? CategoryId { get; set; }
+        public Category? Category { get; set; }
+
         // Navigation Properties
         public ICollection<Variation> Variations { get; set; } = new List<Variation>();
         public ICollection<ProductItem> ProductItems { get; set; } = new List<ProductItem>();

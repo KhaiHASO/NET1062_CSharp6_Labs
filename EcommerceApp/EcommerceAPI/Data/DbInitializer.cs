@@ -1,5 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using EcommerceAPI.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EcommerceAPI.Data
@@ -8,68 +10,115 @@ namespace EcommerceAPI.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
 
-            // Look for any products.
-            if (context.Products.Any())
+            // 1. Seed Users
+            if (!context.Users.Any())
             {
-                return;   // DB has been seeded
+                var users = new User[]
+                {
+                    new User { Username = "admin", PasswordHash = HashPassword("admin123"), Role = "Admin" },
+                    new User { Username = "staff", PasswordHash = HashPassword("staff123"), Role = "Employee" },
+                    new User { Username = "user1", PasswordHash = HashPassword("user123"), Role = "Customer" }
+                };
+                context.Users.AddRange(users);
+                context.SaveChanges();
             }
 
-            // 1. Create Product
+            // 2. Seed Brands & Categories
+            if (!context.Brands.Any())
+            {
+                context.Brands.AddRange(
+                    new Brand { Name = "Apple", Logo = "apple_logo.png", Description = "Think Different" },
+                    new Brand { Name = "Samsung", Logo = "samsung_logo.png", Description = "Inspire the World" },
+                    new Brand { Name = "Sony", Logo = "sony_logo.png", Description = "Be Moved" }
+                );
+                context.SaveChanges();
+            }
+
+            if (!context.Categories.Any())
+            {
+                context.Categories.AddRange(
+                    new Category { Name = "Phone", Description = "Smartphones" },
+                    new Category { Name = "Laptop", Description = "Notebooks & Ultrabooks" },
+                    new Category { Name = "Accessories", Description = "Headphones, Chargers" }
+                );
+                context.SaveChanges();
+            }
+
+            // 3. Seed Products (if empty)
+            if (context.Products.Any()) return;
+
+            var apple = context.Brands.First(b => b.Name == "Apple");
+            var phone = context.Categories.First(c => c.Name == "Phone");
+
+            // Create Product: iPhone 15 Pro Max
             var product = new Product
             {
-                Name = "Áo Thun Polo Cao Cấp",
-                Description = "Chất liệu cotton thoáng mát",
-                BasePrice = 150000,
+                Name = "iPhone 15 Pro Max",
+                Description = "Disign with Titanium",
+                BasePrice = 1200, // $1200 base
+                BrandId = apple.BrandId,
+                CategoryId = phone.CategoryId,
                 CreatedAt = DateTime.Now
             };
             context.Products.Add(product);
-            context.SaveChanges(); // Save to get ID
+            context.SaveChanges(); // Get ID
 
-            // 2. Create Variations
+            // Create Variations
             var colorVar = new Variation { ProductID = product.ProductID, Name = "Màu sắc" };
-            var sizeVar = new Variation { ProductID = product.ProductID, Name = "Kích thước" };
-            context.Variations.AddRange(colorVar, sizeVar);
+            var storageVar = new Variation { ProductID = product.ProductID, Name = "Dung lượng" };
+            context.Variations.AddRange(colorVar, storageVar);
             context.SaveChanges();
 
-            // 3. Create Options
-            var redOpt = new VariationOption { VariationID = colorVar.VariationID, Value = "Đỏ", ImageUrl = "img_red.jpg", DisplayOrder = 0 }; // Color Order 0
-            var blueOpt = new VariationOption { VariationID = colorVar.VariationID, Value = "Xanh", ImageUrl = "img_blue.jpg", DisplayOrder = 1 }; // Color Order 1
-            var sOpt = new VariationOption { VariationID = sizeVar.VariationID, Value = "S", ImageUrl = null, DisplayOrder = 0 }; // Size Order 0
-            var mOpt = new VariationOption { VariationID = sizeVar.VariationID, Value = "M", ImageUrl = null, DisplayOrder = 1 }; // Size Order 1
-            context.VariationOptions.AddRange(redOpt, blueOpt, sOpt, mOpt);
-            context.SaveChanges();
-
-            // 4. Create SKUs (Product Items)
-            // SKU 1: Red - S
-            var item1 = new ProductItem { ProductID = product.ProductID, SKU = "SKU-RED-S", Price = 100000, StockQuantity = 10 };
-            // SKU 2: Red - M
-            var item2 = new ProductItem { ProductID = product.ProductID, SKU = "SKU-RED-M", Price = 120000, StockQuantity = 5 };
-            // SKU 3: Blue - S
-            var item3 = new ProductItem { ProductID = product.ProductID, SKU = "SKU-BLUE-S", Price = 100000, StockQuantity = 20 };
+            // Create Options
+            var titaniumNatual = new VariationOption { VariationID = colorVar.VariationID, Value = "Titan Tự Nhiên", ImageUrl = "titan_natural.jpg", DisplayOrder = 0 };
+            var titaniumBlue = new VariationOption { VariationID = colorVar.VariationID, Value = "Titan Xanh", ImageUrl = "titan_blue.jpg", DisplayOrder = 1 };
             
+            var gb256 = new VariationOption { VariationID = storageVar.VariationID, Value = "256GB", DisplayOrder = 0 };
+            var gb512 = new VariationOption { VariationID = storageVar.VariationID, Value = "512GB", DisplayOrder = 1 };
+            
+            context.VariationOptions.AddRange(titaniumNatual, titaniumBlue, gb256, gb512);
+            context.SaveChanges();
+
+            // Create SKUs (Product Items)
+            // SKU 1: Natural - 256GB
+            var item1 = new ProductItem { ProductID = product.ProductID, SKU = "IP15PM-NAT-256", Price = 1200, StockQuantity = 50 };
+            // SKU 2: Natural - 512GB
+            var item2 = new ProductItem { ProductID = product.ProductID, SKU = "IP15PM-NAT-512", Price = 1400, StockQuantity = 30 };
+            // SKU 3: Blue - 256GB
+            var item3 = new ProductItem { ProductID = product.ProductID, SKU = "IP15PM-BLU-256", Price = 1200, StockQuantity = 40 };
+
             context.ProductItems.AddRange(item1, item2, item3);
             context.SaveChanges();
 
-            // 5. Mapping Configuration
-            var configs = new ProductConfiguration[]
+            // Mapping Configuration
+            var configs = new List<ProductConfiguration>
             {
-                // Item 1: Red + S
-                new ProductConfiguration { ProductItemID = item1.ProductItemID, VariationOptionID = redOpt.VariationOptionID },
-                new ProductConfiguration { ProductItemID = item1.ProductItemID, VariationOptionID = sOpt.VariationOptionID },
+                // Item 1: Natural + 256GB
+                new ProductConfiguration { ProductItemID = item1.ProductItemID, VariationOptionID = titaniumNatual.VariationOptionID },
+                new ProductConfiguration { ProductItemID = item1.ProductItemID, VariationOptionID = gb256.VariationOptionID },
 
-                // Item 2: Red + M
-                new ProductConfiguration { ProductItemID = item2.ProductItemID, VariationOptionID = redOpt.VariationOptionID },
-                new ProductConfiguration { ProductItemID = item2.ProductItemID, VariationOptionID = mOpt.VariationOptionID },
+                // Item 2: Natural + 512GB
+                new ProductConfiguration { ProductItemID = item2.ProductItemID, VariationOptionID = titaniumNatual.VariationOptionID },
+                new ProductConfiguration { ProductItemID = item2.ProductItemID, VariationOptionID = gb512.VariationOptionID },
 
-                // Item 3: Blue + S
-                new ProductConfiguration { ProductItemID = item3.ProductItemID, VariationOptionID = blueOpt.VariationOptionID },
-                new ProductConfiguration { ProductItemID = item3.ProductItemID, VariationOptionID = sOpt.VariationOptionID },
+                // Item 3: Blue + 256GB
+                new ProductConfiguration { ProductItemID = item3.ProductItemID, VariationOptionID = titaniumBlue.VariationOptionID },
+                new ProductConfiguration { ProductItemID = item3.ProductItemID, VariationOptionID = gb256.VariationOptionID },
             };
 
             context.ProductConfigurations.AddRange(configs);
             context.SaveChanges();
+        }
+
+        private static string HashPassword(string password)
+        {
+             using (var sha256 = System.Security.Cryptography.SHA256.Create())
+            {
+                var bytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return Convert.ToBase64String(bytes);
+            }
         }
     }
 }
