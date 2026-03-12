@@ -47,4 +47,26 @@ Dự án này là một RESTful API hoàn chỉnh bằng C# (.NET 10), sử dụ
    dotnet ef database update
    ```
 
-**🌟 Sau khi chạy xong**: Bấm `<F5>` (Với Visual Studio) hoặc lệnh `dotnet run` (VS Code), trình duyệt sẽ mở thẳng ra trang giao diện Swagger ở Base URL (route `/`). Bạn có thể thử nghiệm các hàm API!
+## 4. Hướng dẫn chạy và Test API (Bắt buộc)
+
+Sau khi Database đã được tạo thành công, tiến hành chạy ứng dụng:
+
+### Cách 1: Chạy bằng Visual Studio (Khuyên dùng)
+1. Chọn Profile là `http` hoặc `https` (Cạnh nút nút Play màu xanh lá phía trên cùng).
+2. Bấm phím **`F5`** (hoặc nút Play xanh).
+3. Trình duyệt sẽ tự động bật lên giao diện Swagger tại địa chỉ `http://localhost:5000/`.
+
+### Cách 2: Chạy bằng Terminal / VS Code
+1. Mở Terminal tại thư mục `Demo03`.
+2. Gõ lệnh sau để khởi động web server:
+   ```bash
+   dotnet run
+   ```
+3. Mở trình duyệt và truy cập vào đường dẫn: [http://localhost:5000/](http://localhost:5000/)
+
+---
+
+**🌟 Trải nghiệm API trên Swagger:**
+- Cuộn xuống phần `EmployeeController`, bạn sẽ thấy 2 API là `GET` và `POST`.
+- Bấm vào `GET /api/Employee` -> `Try it out` -> `Execute` để xem danh sách 2 nhân viên đã được tạo sẵn trong cơ sở dữ liệu.
+- Bạn có thể thử nghiệm tạo nhân viên mới qua API `POST`, kiểm tra validation (nếu thiếu `emailId` thì hệ thống sẽ trả về lỗi `400 BadRequest` vì chúng ta đã dùng `[Required]`).
