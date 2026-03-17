@@ -15,8 +15,8 @@ builder.Services.AddScoped<IBookRepository, SqlBookRepository>();
 builder.Services.AddScoped<IBookService, BookService>();
 
 // PHẦN DEMO DI: Thay đổi Implementation dễ dàng mà không phá vỡ BookService
-//builder.Services.AddScoped<INotificationService, EmailNotificationService>(); // Yêu cầu ban đầu
-builder.Services.AddScoped<INotificationService, TelegramNotificationService>(); // Yêu cầu thay đổi
+builder.Services.AddScoped<INotificationService, EmailNotificationService>(); // Yêu cầu ban đầu
+//builder.Services.AddScoped<INotificationService, TelegramNotificationService>(); // Yêu cầu thay đổi
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

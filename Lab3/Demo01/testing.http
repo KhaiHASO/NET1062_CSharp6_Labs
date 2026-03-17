@@ -1,0 +1,35 @@
+@hostname = localhost
+@port = 5178
+@host = http://{{hostname}}:{{port}}
+
+### Lấy danh sách sinh viên
+GET {{host}}/api/sinhviens
+Accept: application/json
+
+### Thêm sinh viên mới
+POST {{host}}/api/sinhviens
+Content-Type: application/json
+
+{
+  "mssv": "PH12345",
+  "hoTen": "Nguyen Van A",
+  "diemTrungBinh": 8.5,
+  "chuyenNganh": "PTPM"
+}
+
+### Lấy thông tin sinh viên theo Id (Thay thế ID sau khi POST)
+GET {{host}}/api/sinhviens/00000000-0000-0000-0000-000000000000
+
+### Cập nhật sinh viên (Thay thế ID sau khi POST)
+PUT {{host}}/api/sinhviens/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "mssv": "PH12345",
+  "hoTen": "Nguyen Van A (Updated)",
+  "diemTrungBinh": 9.0,
+  "chuyenNganh": "CNTT"
+}
+
+### Xóa sinh viên (Thay thế ID sau khi POST)
+DELETE {{host}}/api/sinhviens/00000000-0000-0000-0000-000000000000
