@@ -55,17 +55,13 @@ sinhVienApi.MapPost("/", async (SinhVien sv, AppDbContext db) =>
 sinhVienApi.MapPut("/{id:guid}", async (Guid id, SinhVien inputSv, AppDbContext db) =>
 {
     var sv = await db.SinhViens.FindAsync(id);
-
     if (sv is null) return Results.NotFound();
-
     // Cập nhật các trường thông tin
     sv.MSSV = inputSv.MSSV;
     sv.HoTen = inputSv.HoTen;
     sv.DiemTrungBinh = inputSv.DiemTrungBinh;
     sv.ChuyenNganh = inputSv.ChuyenNganh;
-
     await db.SaveChangesAsync();
-
     return Results.NoContent();
 });
 

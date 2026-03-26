@@ -18,10 +18,10 @@ Content-Type: application/json
 }
 
 ### Lấy thông tin sinh viên theo Id (Thay thế ID sau khi POST)
-GET {{host}}/api/sinhviens/00000000-0000-0000-0000-000000000000
+GET {{host}}/api/sinhviens/11cc95fb-f5cf-4737-b5fd-727c177c6b70
 
 ### Cập nhật sinh viên (Thay thế ID sau khi POST)
-PUT {{host}}/api/sinhviens/00000000-0000-0000-0000-000000000000
+PUT {{host}}/api/sinhviens/11cc95fb-f5cf-4737-b5fd-727c177c6b70
 Content-Type: application/json
 
 {
@@ -32,4 +32,4 @@ Content-Type: application/json
 }
 
 ### Xóa sinh viên (Thay thế ID sau khi POST)
-DELETE {{host}}/api/sinhviens/00000000-0000-0000-0000-000000000000
+DELETE {{host}}/api/sinhviens/11cc95fb-f5cf-4737-b5fd-727c177c6b70
