@@ -1,0 +1,112 @@
+Hãy đóng vai trò là một Senior Front-end Developer kết hợp với chuyên gia Cybersecurity Awareness Training.
+
+Nhiệm vụ: tạo một bộ source code hoàn chỉnh bằng HTML, CSS, JavaScript để mô phỏng trực quan 4 loại tấn công an ninh mạng gồm:
+1. DoS
+2. XSS
+3. Command Injection
+4. SQL Injection
+
+Mục tiêu:
+- Chỉ phục vụ mục đích minh họa, đào tạo nhận thức an toàn thông tin.
+- Tất cả đều là mô phỏng trực quan trên trình duyệt.
+- Không được tạo mã khai thác thật, không được gửi request thật, không được thực thi lệnh hệ thống thật, không được truy cập database thật.
+- Chỉ dùng dữ liệu giả, log giả, animation, luồng xử lý giả lập để người xem hiểu bản chất cuộc tấn công.
+- Không dùng payload nguy hiểm có thể copy-paste để khai thác thật. Nếu cần minh họa input độc hại thì dùng chuỗi giả lập an toàn, đã làm mờ hoặc thay thế ký tự nhạy cảm.
+
+Yêu cầu đầu ra:
+- Trả về đầy đủ source code tách thành:
+  - index.html
+  - style.css
+  - script.js
+- Code chạy được ngay khi mở file HTML trên trình duyệt.
+- Giao diện hiện đại, trực quan, có màu sắc khác nhau cho từng loại tấn công.
+- Có animation, tiến trình, trạng thái, log hiển thị theo thời gian thực.
+- Có nút:
+  - Bắt đầu mô phỏng
+  - Tạm dừng
+  - Chạy lại
+  - Xem giải thích
+- Có khu vực “Kịch bản tấn công”, “Diễn biến”, “Hậu quả”, “Cách phòng tránh”.
+- Có chú thích rõ đây là mô phỏng phục vụ học tập, không phải công cụ tấn công thật.
+
+Yêu cầu nội dung mô phỏng chi tiết:
+
+A. DoS
+- Kịch bản: một website bán vé online đang hoạt động bình thường, sau đó bị lượng lớn request giả lập dồn vào cùng lúc.
+- Hiển thị:
+  - số lượng request tăng dần
+  - thanh tải CPU/Server Load tăng
+  - thời gian phản hồi tăng
+  - người dùng hợp lệ bị chậm hoặc bị từ chối
+- Có timeline rõ:
+  1. Hệ thống ổn định
+  2. Lưu lượng tăng bất thường
+  3. Server quá tải
+  4. Dịch vụ gián đoạn
+- Có phần giải thích ngắn gọn cơ chế và biện pháp phòng chống như rate limiting, caching, load balancing, WAF.
+
+B. XSS
+- Kịch bản: một ô bình luận trên website cho phép nhập nội dung, hệ thống hiển thị lại nội dung đó không được lọc an toàn.
+- Mô phỏng:
+  - bên trái là input người dùng
+  - bên phải là vùng hiển thị kết quả đã render
+  - có 2 chế độ: “unsafe render” và “safe render”
+  - khi ở unsafe render thì giao diện hiển thị cảnh báo mô phỏng rằng nội dung độc hại đã được chèn vào trang
+  - khi ở safe render thì nội dung được escape an toàn
+- Không dùng payload XSS thật có thể khai thác thực tế; chỉ dùng chuỗi giả lập dạng minh họa.
+- Giải thích rõ sự khác nhau giữa render không an toàn và escape/sanitize.
+
+C. Command Injection
+- Kịch bản: một trang quản trị có ô nhập “ping host” hoặc “kiểm tra hệ thống”, nhưng backend giả lập nối chuỗi input vào lệnh hệ thống.
+- Mô phỏng:
+  - hiển thị “command builder” dưới dạng text giả lập
+  - có 2 chế độ: “unsafe concatenation” và “safe validation”
+  - khi ở unsafe thì hệ thống log ra cảnh báo rằng input đã làm thay đổi câu lệnh dự kiến
+  - khi ở safe thì chỉ cho phép ký tự hợp lệ và chặn input bất thường
+- Tuyệt đối không được thực thi lệnh thật, không dùng API backend, không gọi shell.
+- Chỉ mô phỏng bằng text, progress bar, terminal giả lập và cảnh báo.
+- Có phần giải thích tại sao nối chuỗi trực tiếp là nguy hiểm.
+
+D. SQL Injection
+- Kịch bản: form đăng nhập hoặc form tìm kiếm sản phẩm, ứng dụng ghép chuỗi truy vấn SQL từ input người dùng.
+- Mô phỏng:
+  - khu vực nhập username/password hoặc từ khóa tìm kiếm
+  - hiển thị truy vấn SQL giả lập ở 2 chế độ: unsafe query building và parameterized query
+  - khi ở unsafe, hệ thống hiện cảnh báo “logic truy vấn bị thay đổi”
+  - khi ở safe, hiển thị truy vấn tham số hóa an toàn
+- Không cung cấp payload SQLi thật dùng để bypass hệ thống.
+- Chỉ mô phỏng bằng câu truy vấn giả, dữ liệu giả, thông báo trực quan.
+- Có bảng minh họa dữ liệu mẫu để người xem hiểu hậu quả như lộ dữ liệu, đăng nhập trái phép, thay đổi kết quả truy vấn.
+
+Yêu cầu UI/UX:
+- Thiết kế dạng dashboard học tập an toàn thông tin.
+- Mỗi loại tấn công là một card hoặc một tab riêng.
+- Có icon, badge mức độ rủi ro, và màu riêng:
+  - DoS: đỏ/cam
+  - XSS: tím
+  - Command Injection: xanh đậm
+  - SQL Injection: xanh lá hoặc đỏ rượu
+- Có hiệu ứng terminal giả, bảng log cuộn, đồng hồ trạng thái.
+- Responsive, dễ nhìn trên màn hình desktop.
+- Font hiện đại, layout gọn gàng, chuyên nghiệp.
+
+Yêu cầu kỹ thuật:
+- Chỉ dùng HTML, CSS, JavaScript thuần.
+- Không dùng framework.
+- Mã rõ ràng, có comment.
+- Tổ chức code sạch, dễ sửa.
+- Dữ liệu mô phỏng nên được lưu trong object/array JavaScript để dễ quản lý.
+- Có hàm riêng cho từng mô phỏng.
+- Có tooltip hoặc modal giải thích thuật ngữ.
+- Có phần kết luận cuối trang: “Bài học rút ra” và “Nguyên tắc phòng thủ an toàn”.
+
+Yêu cầu rất quan trọng:
+- Đây là website mô phỏng đào tạo, không phải công cụ pentest.
+- Không tạo code khai thác thật.
+- Không cung cấp payload có thể dùng để tấn công ngoài đời thực.
+- Chỉ minh họa nguyên lý bằng hoạt cảnh, log giả, text giả, tình huống giả lập.
+- Cuối cùng, hãy xuất code theo đúng thứ tự:
+  1. index.html
+  2. style.css
+  3. script.js
+- Mỗi file đặt trong code block riêng.

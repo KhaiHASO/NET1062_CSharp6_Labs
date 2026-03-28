@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Attack Awareness Simulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="hero">
+            <div class="hero-copy">
+                <span class="eyebrow">Cybersecurity Awareness Training</span>
+                <h1>Mô phỏng trực quan các kiểu tấn công phổ biến</h1>
+                <p>Môi trường này chỉ dùng cho đào tạo nhận thức an toàn thông tin. Mọi dữ liệu, log, truy vấn, lệnh và phản hồi đều là giả lập, không gửi request thật, không chạy shell, không truy cập cơ sở dữ liệu.</p>
+                <div class="hero-pills">
+                    <span>Safe-by-design demo</span>
+                    <span>Realtime fake telemetry</span>
+                    <span>No exploit payloads</span>
+                </div>
+            </div>
+            <aside class="hero-panel">
+                <div class="panel-card">
+                    <div class="panel-label">Tình trạng mô phỏng</div>
+                    <div class="panel-value" id="global-status">Sẵn sàng</div>
+                    <div class="panel-meter">
+                        <span>4 kịch bản</span>
+                        <strong>Awareness Dashboard</strong>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <div class="panel-label">Lưu ý</div>
+                    <ul class="safety-list">
+                        <li>Chỉ minh họa nguyên lý</li>
+                        <li>Không có mã khai thác thật</li>
+                        <li>Không tương tác hệ thống bên ngoài</li>
+                    </ul>
+                </div>
+            </aside>
+        </header>
+
+        <nav class="attack-tabs" aria-label="Chọn mô phỏng">
+            <button class="tab-button active" data-target="dos-panel">DoS</button>
+            <button class="tab-button" data-target="xss-panel">XSS</button>
+            <button class="tab-button" data-target="cmd-panel">Command Injection</button>
+            <button class="tab-button" data-target="sql-panel">SQL Injection</button>
+        </nav>
+
+        <main class="panel-stack">
+            <section class="attack-panel active danger-dos" id="dos-panel" data-sim="dos">
+                <div class="panel-heading">
+                    <div>
+                        <span class="attack-tag">Availability</span>
+                        <h2>DoS Simulation</h2>
+                    </div>
+                    <div class="risk-badge risk-high">Risk: High</div>
+                </div>
+                <div class="control-bar">
+                    <button class="action-btn start-btn" data-action="start">Bắt đầu mô phỏng</button>
+                    <button class="action-btn pause-btn" data-action="pause">Tạm dừng</button>
+                    <button class="action-btn reset-btn" data-action="reset">Chạy lại</button>
+                    <button class="action-btn explain-btn" data-action="explain">Xem giải thích</button>
+                </div>
+                <div class="visual-grid">
+                    <article class="metric-board">
+                        <div class="metric-card"><span>Requests / phút</span><strong id="dos-requests">1,200</strong></div>
+                        <div class="metric-card"><span>Server Load</span><strong id="dos-load">21%</strong></div>
+                        <div class="metric-card"><span>Response Time</span><strong id="dos-response">120 ms</strong></div>
+                        <div class="metric-card"><span>Người dùng hợp lệ</span><strong id="dos-users">Thông suốt</strong></div>
+                        <div class="meter-card">
+                            <div class="meter-header"><span>CPU / Server Load</span><strong id="dos-load-label">21%</strong></div>
+                            <div class="progress-track"><div class="progress-fill" id="dos-load-bar"></div></div>
+                        </div>
+                        <div class="meter-card">
+                            <div class="meter-header"><span>Service Availability</span><strong id="dos-availability-label">98%</strong></div>
+                            <div class="progress-track invert"><div class="progress-fill" id="dos-availability-bar"></div></div>
+                        </div>
+                    </article>
+                    <article class="timeline-card">
+                        <h3>Kịch bản tấn công</h3>
+                        <ol class="timeline" id="dos-timeline">
+                            <li class="active">1. Hệ thống ổn định</li>
+                            <li>2. Lưu lượng tăng bất thường</li>
+                            <li>3. Server quá tải</li>
+                            <li>4. Dịch vụ gián đoạn</li>
+                        </ol>
+                        <div class="status-ring"><span id="dos-stage">Ổn định</span></div>
+                    </article>
+                </div>
+                <div class="info-grid">
+                    <article class="info-card"><h3>Diễn biến</h3><p id="dos-narrative">Website bán vé đang xử lý lượng truy cập bình thường với phản hồi ổn định.</p></article>
+                    <article class="info-card"><h3>Hậu quả</h3><p>Người dùng hợp lệ bị chậm, timeout hoặc bị từ chối truy cập khi tài nguyên hệ thống bị chiếm dụng.</p></article>
+                    <article class="info-card"><h3>Cách phòng tránh</h3><p>Áp dụng rate limiting, caching, CDN, load balancing và WAF để giảm ảnh hưởng của lưu lượng bất thường.</p></article>
+                </div>
+                <article class="log-card">
+                    <div class="card-title-row"><h3>Log mô phỏng</h3><button class="hint-chip" data-term="dos">Thuật ngữ</button></div>
+                    <div class="terminal-log" id="dos-log"></div>
+                </article>
+            </section>
+
+            <section class="attack-panel danger-xss" id="xss-panel" data-sim="xss">
+                <div class="panel-heading">
+                    <div><span class="attack-tag">Client-Side Integrity</span><h2>XSS Simulation</h2></div>
+                    <div class="risk-badge risk-medium">Risk: Medium</div>
+                </div>
+                <div class="control-bar">
+                    <button class="action-btn start-btn" data-action="start">Bắt đầu mô phỏng</button>
+                    <button class="action-btn pause-btn" data-action="pause">Tạm dừng</button>
+                    <button class="action-btn reset-btn" data-action="reset">Chạy lại</button>
+                    <button class="action-btn explain-btn" data-action="explain">Xem giải thích</button>
+                </div>
+                <div class="mode-switch" data-mode-group="xss">
+                    <button class="mode-btn active" data-mode="unsafe">Unsafe Render</button>
+                    <button class="mode-btn" data-mode="safe">Safe Render</button>
+                </div>
+                <div class="split-grid">
+                    <article class="info-card">
+                        <h3>Input người dùng</h3>
+                        <div class="mock-input" id="xss-input-preview"></div>
+                        <p>Ký tự nhạy cảm đã được làm mờ để tránh tạo payload có thể sao chép sử dụng thật.</p>
+                    </article>
+                    <article class="info-card">
+                        <h3>Kết quả render</h3>
+                        <div class="render-box" id="xss-render-box"></div>
+                        <div class="alert-banner" id="xss-alert">Chế độ unsafe render có thể khiến nội dung không đáng tin cậy chèn vào giao diện.</div>
+                    </article>
+                </div>
+                <div class="info-grid">
+                    <article class="info-card"><h3>Kịch bản tấn công</h3><p>Website bình luận hiển thị lại nội dung người dùng gửi lên mà không escape hoặc sanitize đúng cách.</p></article>
+                    <article class="info-card"><h3>Diễn biến</h3><p id="xss-narrative">Hệ thống đang chờ nội dung bình luận được render lên giao diện.</p></article>
+                    <article class="info-card"><h3>Cách phòng tránh</h3><p>Luôn escape output, sanitize HTML nếu bắt buộc phải cho phép định dạng, và dùng CSP để giảm rủi ro.</p></article>
+                </div>
+                <article class="log-card">
+                    <div class="card-title-row"><h3>Render Flow</h3><button class="hint-chip" data-term="xss">Thuật ngữ</button></div>
+                    <div class="terminal-log" id="xss-log"></div>
+                </article>
+            </section>
+
+            <section class="attack-panel danger-cmd" id="cmd-panel" data-sim="cmd">
+                <div class="panel-heading">
+                    <div><span class="attack-tag">Command Execution Risk</span><h2>Command Injection Simulation</h2></div>
+                    <div class="risk-badge risk-critical">Risk: Critical</div>
+                </div>
+                <div class="control-bar">
+                    <button class="action-btn start-btn" data-action="start">Bắt đầu mô phỏng</button>
+                    <button class="action-btn pause-btn" data-action="pause">Tạm dừng</button>
+                    <button class="action-btn reset-btn" data-action="reset">Chạy lại</button>
+                    <button class="action-btn explain-btn" data-action="explain">Xem giải thích</button>
+                </div>
+                <div class="mode-switch" data-mode-group="cmd">
+                    <button class="mode-btn active" data-mode="unsafe">Unsafe Concatenation</button>
+                    <button class="mode-btn" data-mode="safe">Safe Validation</button>
+                </div>
+                <div class="visual-grid">
+                    <article class="info-card terminal-card">
+                        <h3>Command Builder</h3>
+                        <div class="command-line" id="cmd-builder"></div>
+                        <div class="progress-track"><div class="progress-fill" id="cmd-progress"></div></div>
+                    </article>
+                    <article class="info-card terminal-card">
+                        <h3>Giả lập terminal</h3>
+                        <div class="terminal-log tall" id="cmd-log"></div>
+                    </article>
+                </div>
+                <div class="info-grid">
+                    <article class="info-card"><h3>Kịch bản tấn công</h3><p>Trang quản trị có chức năng “kiểm tra host”, backend giả lập ghép input người dùng trực tiếp vào chuỗi lệnh.</p></article>
+                    <article class="info-card"><h3>Diễn biến</h3><p id="cmd-narrative">Hệ thống đang chờ nhập host hợp lệ để chạy bước kiểm tra mô phỏng.</p></article>
+                    <article class="info-card"><h3>Cách phòng tránh</h3><p>Không ghép chuỗi lệnh trực tiếp, dùng allowlist ký tự hợp lệ, tham số hóa API nội bộ, và tách quyền thực thi.</p></article>
+                </div>
+            </section>
+
+            <section class="attack-panel danger-sql" id="sql-panel" data-sim="sql">
+                <div class="panel-heading">
+                    <div><span class="attack-tag">Data Integrity</span><h2>SQL Injection Simulation</h2></div>
+                    <div class="risk-badge risk-high">Risk: High</div>
+                </div>
+                <div class="control-bar">
+                    <button class="action-btn start-btn" data-action="start">Bắt đầu mô phỏng</button>
+                    <button class="action-btn pause-btn" data-action="pause">Tạm dừng</button>
+                    <button class="action-btn reset-btn" data-action="reset">Chạy lại</button>
+                    <button class="action-btn explain-btn" data-action="explain">Xem giải thích</button>
+                </div>
+                <div class="mode-switch" data-mode-group="sql">
+                    <button class="mode-btn active" data-mode="unsafe">Unsafe Query Building</button>
+                    <button class="mode-btn" data-mode="safe">Parameterized Query</button>
+                </div>
+                <div class="visual-grid sql-layout">
+                    <article class="info-card">
+                        <h3>Form đăng nhập giả lập</h3>
+                        <div class="mock-form">
+                            <div><span>Username</span><strong id="sql-user"></strong></div>
+                            <div><span>Password</span><strong id="sql-pass"></strong></div>
+                        </div>
+                        <p>Chuỗi nhập được làm mờ và vô hại, chỉ dùng để chỉ ra việc logic truy vấn có thể bị biến dạng.</p>
+                    </article>
+                    <article class="info-card">
+                        <h3>SQL giả lập</h3>
+                        <div class="query-box" id="sql-query-box"></div>
+                        <div class="alert-banner" id="sql-alert">Cảnh báo sẽ xuất hiện khi truy vấn ghép chuỗi làm thay đổi logic lọc dữ liệu.</div>
+                    </article>
+                </div>
+                <div class="info-grid">
+                    <article class="info-card"><h3>Diễn biến</h3><p id="sql-narrative">Ứng dụng đang chuẩn bị câu truy vấn tìm bản ghi người dùng.</p></article>
+                    <article class="info-card"><h3>Hậu quả</h3><p>Logic truy vấn thay đổi có thể dẫn đến lộ dữ liệu, bỏ qua kiểm tra xác thực hoặc trả về tập kết quả ngoài ý muốn.</p></article>
+                    <article class="info-card"><h3>Cách phòng tránh</h3><p>Sử dụng prepared statement, parameterized query, kiểm tra kiểu dữ liệu đầu vào và giới hạn quyền tài khoản DB.</p></article>
+                </div>
+                <article class="log-card">
+                    <div class="card-title-row"><h3>Dữ liệu minh họa</h3><button class="hint-chip" data-term="sql">Thuật ngữ</button></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>User ID</th><th>Role</th><th>Trạng thái</th><th>Kết quả mô phỏng</th></tr>
+                            </thead>
+                            <tbody id="sql-table"></tbody>
+                        </table>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <section class="summary-section">
+            <div class="summary-card">
+                <h2>Bài học rút ra</h2>
+                <p>Các cuộc tấn công thường bắt đầu từ một giả định thiếu an toàn: tin vào đầu vào người dùng, không giới hạn tài nguyên, hoặc nối chuỗi trực tiếp vào logic xử lý. Hiểu cơ chế giúp đội ngũ kỹ thuật và người học nhận diện dấu hiệu sớm hơn.</p>
+            </div>
+            <div class="summary-card">
+                <h2>Nguyên tắc phòng thủ an toàn</h2>
+                <ul>
+                    <li>Xác thực và ràng buộc đầu vào theo allowlist.</li>
+                    <li>Escape hoặc parameterize dữ liệu trước khi xử lý.</li>
+                    <li>Giới hạn tài nguyên, phân lớp phòng thủ và theo dõi log.</li>
+                    <li>Thiết kế hệ thống với giả định có hành vi bất thường.</li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="explain-modal" aria-hidden="true">
+        <div class="modal">
+            <button class="modal-close" id="modal-close" aria-label="Đóng">×</button>
+            <h2 id="modal-title">Giải thích</h2>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
